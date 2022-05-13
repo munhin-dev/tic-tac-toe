@@ -22,15 +22,10 @@ main {
   align-items: center;
 }
 
-footer {
-  font-size: 0.8em;
-  text-align: center;
-}
-
 .scoreboard {
   display: flex;
-  justify-content: space-between;
-  width: max(25%, 175px);
+  justify-content: space-around;
+  width: min(50vw, 350px);
   margin: 0 auto;
 }
 
@@ -39,7 +34,6 @@ footer {
 }
 
 .game-board {
-  background-color: #fff;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
@@ -49,10 +43,41 @@ footer {
 
 .reset-btn {
   padding: 10px;
+  visibility: hidden;
 }
 
-@media only screen and (max-width: 600px) {
-  h1 {
-    font-size: 24px;
+.show-btn {
+  visibility: visible;
+}
+
+
+@media screen and (max-width: 450px) {
+  body {
+    font-size: 0.75em;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .game-board button {
+    font-size: 40px;
+  }
+  .scoreboard {
+    font-size: 0.9em;
+  }
+}
+@media screen and (min-width: 601px) {
+  .game-board button {
+    font-size: 60px;
+  }
+  .scoreboard {
+    font-size: 1em;
+  }
+}
+@media screen and (min-width: 800px) {
+  .game-board button {
+    font-size: 80px;
+  }
+  .scoreboard {
+    font-size: 1.1em;
   }
 }
