@@ -1,23 +1,23 @@
-const buttons = document.querySelectorAll(".game-board button");
+const cells = document.querySelectorAll(".game-board button");
 const resetBtn = document.querySelector(".reset-btn");
 const gameInfo = document.querySelector(".game-info");
 const scoreX = document.querySelector(".player-x");
 const scoreO = document.querySelector(".player-o");
 const scoreTie = document.querySelector(".tie");
 let scoreCount = { playerX: 0, playerO: 0, tie: 0 };
-let playersTurn = true;
-let hasWinner = false;
+let playersXTurn = true;
+let gameWon = false;
 let isDraw = false;
 
-function getBoard(buttons) {
-  let board = [];
+function getWinningCombinations(cells) {
+  let cellsContent = [];
   let getHorizontal = [];
 
-  for (const button of buttons) {
-    board.push(button.textContent);
+  for (const cell of cells) {
+    cellsContent.push(cell.textContent);
   }
-  for (let i = 0; i < board.length; i += 3) {
-    getHorizontal.push(board.slice(i, i + 3));
+  for (let i = 0; i < cellsContent.length; i += 3) {
+    getHorizontal.push(cellsContent.slice(i, i + 3));
   }
   let getVertical = getHorizontal.map((_, index) =>
     getHorizontal.map((row) => row[index])
@@ -32,12 +32,15 @@ function getBoard(buttons) {
   return [...getHorizontal, ...getVertical, getLeftDiagonal, getRightDiagonal];
 }
 
-function checkResult(rows) {
-  isDraw = Array.from(buttons).every((button) => Boolean(button.textContent));
-  if (isDraw) return;
-  for (const row of rows) {
-    hasWinner = row.every((move) => move === row[0] && move !== "");
-    if (hasWinner) break;
+function checkResult(combinations) {
+  for (const combination of combinations) {
+    gameWon = combination.every(
+      (cell) => cell === combination[0] && cell !== ""
+    );
+    if (gameWon) break;
+  }
+  if (!gameWon) {
+    isDraw = Array.from(cells).every((cell) => Boolean(cell.textContent));
   }
 }
 
@@ -47,43 +50,40 @@ function updateScore() {
     scoreTie.textContent = scoreCount.tie;
     return;
   }
-  playersTurn ? scoreCount.playerO++ : scoreCount.playerX++;
+  playersXTurn ? scoreCount.playerO++ : scoreCount.playerX++;
   scoreX.textContent = scoreCount.playerX;
   scoreO.textContent = scoreCount.playerO;
 }
 
 function handleClick(event) {
   let button = event.target;
-  playersTurn ? (button.textContent = "X") : (button.textContent = "O");
-  playersTurn = !playersTurn;
+  playersXTurn ? (button.textContent = "X") : (button.textContent = "O");
+  playersXTurn = !playersXTurn;
   button.disabled = true;
 
-  let board = getBoard(buttons);
-  checkResult(board);
+  let allCombinations = getWinningCombinations(cells);
+  checkResult(allCombinations);
 
-  if (hasWinner) {
-    gameInfo.textContent = "We have a winner!";
-    buttons.forEach((button) => {
-      button.disabled = true;
-    });
+  if (gameWon || isDraw) {
     resetBtn.classList.add("show-btn");
     updateScore();
-    return;
-  }
-
-  if (isDraw) {
-    gameInfo.textContent = "We have a draw!";
-    resetBtn.classList.add("show-btn");
-    updateScore();
-    return;
+    if (gameWon) {
+      gameInfo.textContent = "We have a winner!";
+      cells.forEach((button) => {
+        button.disabled = true;
+      });
+    }
+    if (isDraw) {
+      gameInfo.textContent = "It is a draw!";
+    }
   }
 }
 
 function handleReset() {
-  playersTurn = true;
-  hasWinner = false;
+  playersXTurn = true;
+  gameWon = false;
   isDraw = false;
-  buttons.forEach((button) => {
+  cells.forEach((button) => {
     button.innerText = "";
     button.disabled = false;
   });
@@ -91,7 +91,7 @@ function handleReset() {
   resetBtn.classList.remove("show-btn");
 }
 
-buttons.forEach((button) => {
+cells.forEach((button) => {
   button.addEventListener("click", handleClick);
 });
 resetBtn.addEventListener("click", handleReset);
