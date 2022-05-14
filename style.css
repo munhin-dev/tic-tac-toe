@@ -1,9 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=Macondo&display=swap");
+
 * {
   box-sizing: border-box;
 }
 
 body {
-  background-color: mistyrose;
+  font-family: "Macondo", cursive;
+  background-color: #05386b;
+  color: white;
   width: 50vw;
   height: 80vh;
   margin: 0 auto;
@@ -14,6 +18,8 @@ body {
 
 h1 {
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
 main {
@@ -27,10 +33,7 @@ main {
   justify-content: space-around;
   width: min(50vw, 350px);
   margin: 0 auto;
-}
-
-.player-turn {
-  text-align: center;
+  z-index: 1;
 }
 
 .game-board {
@@ -39,24 +42,107 @@ main {
   grid-template-rows: repeat(3, 1fr);
   height: min(40vw, 350px);
   width: min(40vw, 350px);
+  gap: min(0.8vw, 10px);
 }
 
 .reset-btn {
-  padding: 10px;
+  margin: 0 auto;
+  z-index: 1;
   visibility: hidden;
+}
+
+.reset-btn button {
+  font-size: min(3.5vw, 25px);
+  border: none;
+  border-radius: 20px;
+  color: white;
+  transition: background 300ms ease-in-out;
+  font-family: "Macondo", cursive;
+  padding: 8px 10px;
+  background-size: 300% 100%;
+  border-radius: 50px;
+  background-image: linear-gradient(
+    to right,
+    rgb(40, 31, 207),
+    rgb(41, 116, 230),
+    rgb(5, 184, 219)
+  );
+  box-shadow: 0 4px 15px 0 rgba(49, 150, 196, 0.75);
+  transition: background 0.4s ease-in-out;
+}
+
+.reset-btn button:hover {
+  background-position: 100% 0;
+  transition: background 0.4s ease-in-out;
 }
 
 .show-btn {
   visibility: visible;
 }
 
+.overlay {
+  position: fixed;
+  visibility: hidden;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.show-overlay {
+  visibility: visible;
+}
+
+.game-info {
+  font-size: 25px;
+  z-index: 1;
+}
+
+.game-board button {
+  border: 1px solid #0099cc;
+  background-color: #0099cc;
+  color: #ffffff;
+  padding: 5px 10px;
+  box-shadow: 0 0 40px 40px #3498db inset, 0 0 0 0 #3498db;
+  transition: all 150ms ease-in-out;
+}
+
+.game-board button:hover {
+  border: 1px solid #0099cc;
+  background-color: #0099cc;
+  color: #ffffff;
+  padding: 5px 10px;
+  box-shadow: 0 0 10px 0 #3498db inset, 0 0 10px 4px #3498db;
+}
+
+.game-board button:disabled,
+button[disabled] {
+  font-family: "Macondo", cursive;
+  border: 1px solid #04b9dd;
+  background-color: #04b9dd;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.game-board button:disabled.player1-move,
+button[disabled].player1-move {
+  background-color: #0d50cc;
+  border: 1px solid #0d50cc;
+}
+
 @media screen and (max-width: 450px) {
-  body {
+  .game-board button {
+    font-size: 30px;
+  }
+  .scoreboard {
     font-size: 0.75em;
   }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (min-width: 451px) {
   .game-board button {
     font-size: 40px;
   }

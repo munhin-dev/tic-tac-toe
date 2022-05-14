@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <header>
-    <h1>TIC TAC TOE</h1>
+    <h1 class="game-title">TIC TAC TOE</h1>
   </header>
   <main>
     <p class="game-info"></p>
@@ -23,15 +23,17 @@
       <button></button>
       <button></button>
     </div>
+    <div class="scoreboard">
+      <p>PLAYER (X): <span class="player-1">0</span></p>
+      <p>TIE: <span class="tie">0</span></p>
+      <p>PLAYER (O): <span class="player-2">0</span></p>
+    </div>
     <div class="reset-btn">
       <button>Play Again</button>
     </div>
-    <div class="scoreboard">
-      <p>PLAYER (X): <span class="player-x">0</span></p>
-      <p>TIE: <span class="tie">0</span></p>
-      <p>PLAYER (O): <span class="player-o">0</span></p>
-    </div>
+    <div class="overlay"></div>
   </main>
+
   <body>
     <script src="./app.js"></script>
   </body>

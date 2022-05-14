@@ -1,46 +1,37 @@
-const cells = document.querySelectorAll(".game-board button");
+const buttons = document.querySelectorAll(".game-board button");
 const resetBtn = document.querySelector(".reset-btn");
 const gameInfo = document.querySelector(".game-info");
-const scoreX = document.querySelector(".player-x");
-const scoreO = document.querySelector(".player-o");
+const overlay = document.querySelector(".overlay");
+const scorePlayer1 = document.querySelector(".player-1");
+const scorePlayer2 = document.querySelector(".player-2");
 const scoreTie = document.querySelector(".tie");
-let scoreCount = { playerX: 0, playerO: 0, tie: 0 };
-let playersXTurn = true;
+let scoreCount = { player1: 0, player2: 0, tie: 0 };
+let isPlayer1 = true;
 let gameWon = false;
 let isDraw = false;
 
-function getWinningCombinations(cells) {
-  let cellsContent = [];
-  let getHorizontal = [];
-
-  for (const cell of cells) {
-    cellsContent.push(cell.textContent);
+function getWinCombinations(buttons) {
+  let lastIndex = () => horizontal.length - 1;
+  let allMoves = Array.from(buttons).map((button) => button.textContent);
+  let horizontal = [];
+  for (let i = 0; i < allMoves.length; i += 3) {
+    horizontal.push(allMoves.slice(i, i + 3));
   }
-  for (let i = 0; i < cellsContent.length; i += 3) {
-    getHorizontal.push(cellsContent.slice(i, i + 3));
-  }
-  let getVertical = getHorizontal.map((_, index) =>
-    getHorizontal.map((row) => row[index])
-  );
-  let getLeftDiagonal = getHorizontal.map(
-    (_, index) => getHorizontal[index][index]
-  );
-  let getRightDiagonal = getHorizontal.map(
-    (_, index) => getHorizontal[index][getHorizontal.length - index - 1]
-  );
-
-  return [...getHorizontal, ...getVertical, getLeftDiagonal, getRightDiagonal];
+  let vertical = horizontal.map((_, i) => horizontal.map((row) => row[i]));
+  let leftDiagonal = horizontal.map((_, i) => horizontal[i][i]);
+  let rightDiagonal = horizontal.map((_, i) => horizontal[i][lastIndex() - i]);
+  return [...horizontal, ...vertical, leftDiagonal, rightDiagonal];
 }
 
-function checkResult(combinations) {
+function checkWinner(combinations) {
   for (const combination of combinations) {
     gameWon = combination.every(
-      (cell) => cell === combination[0] && cell !== ""
+      (move) => move === combination[0] && move !== ""
     );
     if (gameWon) break;
   }
   if (!gameWon) {
-    isDraw = Array.from(cells).every((cell) => Boolean(cell.textContent));
+    isDraw = Array.from(buttons).every((button) => Boolean(button.textContent));
   }
 }
 
@@ -50,40 +41,40 @@ function updateScore() {
     scoreTie.textContent = scoreCount.tie;
     return;
   }
-  playersXTurn ? scoreCount.playerO++ : scoreCount.playerX++;
-  scoreX.textContent = scoreCount.playerX;
-  scoreO.textContent = scoreCount.playerO;
+  isPlayer1 ? scoreCount.player2++ : scoreCount.player1++;
+  scorePlayer1.textContent = scoreCount.player1;
+  scorePlayer2.textContent = scoreCount.player2;
 }
 
 function handleClick(event) {
   let button = event.target;
-  playersXTurn ? (button.textContent = "X") : (button.textContent = "O");
-  playersXTurn = !playersXTurn;
+  if (isPlayer1) {
+    button.textContent = "X";
+    button.classList.add("player1-move");
+  } else {
+    button.textContent = "O";
+  }
+  isPlayer1 = !isPlayer1;
   button.disabled = true;
-
-  let allCombinations = getWinningCombinations(cells);
-  checkResult(allCombinations);
-
+  let allCombinations = getWinCombinations(buttons);
+  checkWinner(allCombinations);
   if (gameWon || isDraw) {
-    resetBtn.classList.add("show-btn");
     updateScore();
-    if (gameWon) {
-      gameInfo.textContent = "We have a winner!";
-      cells.forEach((button) => {
-        button.disabled = true;
-      });
-    }
-    if (isDraw) {
-      gameInfo.textContent = "It is a draw!";
-    }
+    overlay.classList.add("show-overlay");
+    resetBtn.classList.add("show-btn");
+    gameWon
+      ? (gameInfo.textContent = "We have a Winner!!")
+      : (gameInfo.textContent = "It is a Draw!!");
   }
 }
 
 function handleReset() {
-  playersXTurn = true;
+  overlay.classList.remove("show-overlay");
+  isPlayer1 = true;
   gameWon = false;
   isDraw = false;
-  cells.forEach((button) => {
+  buttons.forEach((button) => {
+    button.classList.remove("player1-move");
     button.innerText = "";
     button.disabled = false;
   });
@@ -91,7 +82,7 @@ function handleReset() {
   resetBtn.classList.remove("show-btn");
 }
 
-cells.forEach((button) => {
+buttons.forEach((button) => {
   button.addEventListener("click", handleClick);
 });
 resetBtn.addEventListener("click", handleReset);
