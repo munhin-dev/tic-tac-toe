@@ -10,12 +10,12 @@ let isPlayer1 = true;
 let gameWon = false;
 let isDraw = false;
 
-function getWinCombinations(buttons) {
+function getAllCombination(buttons) {
   let lastIndex = () => horizontal.length - 1;
-  let allMoves = Array.from(buttons).map((button) => button.textContent);
+  let indexes = Array.from(buttons, (_, i) => i);
   let horizontal = [];
-  for (let i = 0; i < allMoves.length; i += 3) {
-    horizontal.push(allMoves.slice(i, i + 3));
+  for (let i = 0; i < indexes.length; i += 3) {
+    horizontal.push(indexes.slice(i, i + 3));
   }
   let vertical = horizontal.map((_, i) => horizontal.map((row) => row[i]));
   let leftDiagonal = horizontal.map((_, i) => horizontal[i][i]);
@@ -23,58 +23,69 @@ function getWinCombinations(buttons) {
   return [...horizontal, ...vertical, leftDiagonal, rightDiagonal];
 }
 
-function checkWinner(combinations) {
+function checkResult(combinations) {
+  let winningCombination = [];
   for (const combination of combinations) {
-    gameWon = combination.every(
-      (move) => move === combination[0] && move !== ""
-    );
-    if (gameWon) break;
+    gameWon = combination.every((index) => {
+      let cellContent = buttons[index].textContent;
+      let firstCell = buttons[combination[0]].textContent;
+      return cellContent === firstCell && cellContent !== "";
+    });
+    if (gameWon) {
+      winningCombination = combination;
+      break;
+    }
   }
   if (!gameWon) {
     isDraw = Array.from(buttons).every((button) => Boolean(button.textContent));
   }
+  return winningCombination;
 }
 
-function updateScore() {
+function updateResult(winningCells) {
+  overlay.classList.add("show-overlay");
+  resetBtn.classList.add("show-btn");
+  gameInfo.classList.add("animate__tada");
   if (isDraw) {
     scoreCount.tie++;
     scoreTie.textContent = scoreCount.tie;
-    return;
+    gameInfo.textContent = "It is a Draw!!";
   }
-  isPlayer1 ? scoreCount.player2++ : scoreCount.player1++;
-  scorePlayer1.textContent = scoreCount.player1;
-  scorePlayer2.textContent = scoreCount.player2;
+  if (gameWon) {
+    isPlayer1 ? scoreCount.player1++ : scoreCount.player2++;
+    scorePlayer1.textContent = scoreCount.player1;
+    scorePlayer2.textContent = scoreCount.player2;
+    gameInfo.textContent = "We have a Winner!!";
+    winningCells.forEach((index) => {
+      buttons[index].classList.add("animate__flash");
+    });
+  }
 }
 
 function handleClick(event) {
   let button = event.target;
   if (isPlayer1) {
     button.textContent = "X";
-    button.classList.add("player1-move");
+    button.classList.add("is-player1");
   } else {
     button.textContent = "O";
   }
-  isPlayer1 = !isPlayer1;
   button.disabled = true;
-  let allCombinations = getWinCombinations(buttons);
-  checkWinner(allCombinations);
-  if (gameWon || isDraw) {
-    updateScore();
-    overlay.classList.add("show-overlay");
-    resetBtn.classList.add("show-btn");
-    gameWon
-      ? (gameInfo.textContent = "We have a Winner!!")
-      : (gameInfo.textContent = "It is a Draw!!");
-  }
+  let combinations = getAllCombination(buttons);
+  let winningCells = checkResult(combinations);
+  let isGameOver = gameWon || isDraw;
+  isGameOver ? updateResult(winningCells) : (isPlayer1 = !isPlayer1);
 }
 
 function handleReset() {
   overlay.classList.remove("show-overlay");
+  gameInfo.classList.remove("animate__tada");
   isPlayer1 = true;
   gameWon = false;
   isDraw = false;
   buttons.forEach((button) => {
-    button.classList.remove("player1-move");
+    button.classList.remove("is-player1");
+    button.classList.remove("animate__flash");
     button.innerText = "";
     button.disabled = false;
   });
