@@ -1,19 +1,19 @@
-const buttons = document.querySelectorAll(".game-board button");
+const gameBoard = document.querySelectorAll(".game-board button");
 const resetBtn = document.querySelector(".reset-btn");
+const changePlayer = document.querySelector(".change-player");
 const gameInfo = document.querySelector(".game-info");
 const overlay = document.querySelector(".overlay");
 const scorePlayer1 = document.querySelector(".player-1");
 const scorePlayer2 = document.querySelector(".player-2");
 const scoreTie = document.querySelector(".tie");
-let scoreCount = { player1: 0, player2: 0, tie: 0 };
+let isBotPlaying = true;
 let isPlayer1 = true;
-let gameWon = false;
-let isDraw = false;
+let isGameOver = false;
 
-function getAllCombination(buttons) {
-  let lastIndex = () => horizontal.length - 1;
-  let indexes = Array.from(buttons, (_, i) => i);
+function getWinningCombinations(board) {
+  let indexes = Array.from(board, (_, i) => i);
   let horizontal = [];
+  let lastIndex = () => horizontal.length - 1;
   for (let i = 0; i < indexes.length; i += 3) {
     horizontal.push(indexes.slice(i, i + 3));
   }
@@ -23,77 +23,163 @@ function getAllCombination(buttons) {
   return [...horizontal, ...vertical, leftDiagonal, rightDiagonal];
 }
 
-function checkResult(combinations) {
-  let winningCombination = [];
+function getResult() {
+  let combinations = getWinningCombinations(gameBoard);
+  let winningRow = [];
   for (const combination of combinations) {
     gameWon = combination.every((index) => {
-      let cellContent = buttons[index].textContent;
-      let firstCell = buttons[combination[0]].textContent;
+      let cellContent = gameBoard[index].textContent;
+      let firstCell = gameBoard[combination[0]].textContent;
       return cellContent === firstCell && cellContent !== "";
     });
     if (gameWon) {
-      winningCombination = combination;
+      winningRow = combination;
       break;
     }
   }
   if (!gameWon) {
-    isDraw = Array.from(buttons).every((button) => Boolean(button.textContent));
+    isDraw = Array.from(gameBoard).every((column) =>
+      Boolean(column.textContent)
+    );
   }
-  return winningCombination;
+  isGameOver = isDraw || gameWon;
+  return {
+    indexes: winningRow,
+    gameState: { gameWon: gameWon, isDraw: isDraw },
+  };
 }
 
-function updateResult(winningCells) {
+function setScore(indexes, { gameWon, isDraw }) {
   overlay.classList.add("show-overlay");
   resetBtn.classList.add("show-btn");
   gameInfo.classList.add("animate__tada");
   if (isDraw) {
-    scoreCount.tie++;
-    scoreTie.textContent = scoreCount.tie;
+    score.tie++;
+    scoreTie.textContent = score.tie;
     gameInfo.textContent = "It is a Draw!!";
   }
   if (gameWon) {
-    isPlayer1 ? scoreCount.player1++ : scoreCount.player2++;
-    scorePlayer1.textContent = scoreCount.player1;
-    scorePlayer2.textContent = scoreCount.player2;
+    isPlayer1 ? score.player1++ : score.player2++;
+    scorePlayer1.textContent = score.player1;
+    scorePlayer2.textContent = score.player2;
     gameInfo.textContent = "We have a Winner!!";
-    winningCells.forEach((index) => {
-      buttons[index].classList.add("animate__flash");
+    indexes.forEach((index) => {
+      gameBoard[index].classList.add("animate__flash");
     });
   }
 }
 
-function handleClick(event) {
-  let button = event.target;
-  if (isPlayer1) {
-    button.textContent = "X";
-    button.classList.add("is-player1");
-  } else {
-    button.textContent = "O";
+function setBotMove(board) {
+  function randomIndex(num) {
+    return Math.floor(Math.random() * num);
   }
-  button.disabled = true;
-  let combinations = getAllCombination(buttons);
-  let winningCells = checkResult(combinations);
-  let isGameOver = gameWon || isDraw;
-  isGameOver ? updateResult(winningCells) : (isPlayer1 = !isPlayer1);
+
+  function getSymbol(player) {
+    return player ? "O" : "X";
+  }
+
+  function getMoves(symbol, combinations) {
+    let bestMoves = [];
+    for (const combination of combinations) {
+      let count = { filledCells: 0, emptyCells: 0 };
+      for (const index of combination) {
+        let columnContent = board[index].textContent;
+        if (columnContent === symbol) {
+          count.filledCells++;
+        } else if (columnContent === "") {
+          count.emptyCells++;
+        }
+        if (count.filledCells === 2 && count.emptyCells === 1) {
+          bestMoves.push(combination);
+        }
+      }
+    }
+    return bestMoves;
+  }
+
+  function selectMove(moves) {
+    let move = moves[randomIndex(moves.length)];
+    move.forEach((index) => {
+      let column = board[index];
+      if (!column.disabled) {
+        setMove(index);
+      }
+    });
+  }
+
+  function selectRandomMove() {
+    let emptyColumns = [];
+    board.forEach((column, index) => {
+      if (!column.disabled) {
+        emptyColumns.push(index);
+      }
+    });
+    let index = emptyColumns[randomIndex(emptyColumns.length)];
+    setMove(index);
+  }
+
+  function setMove(index) {
+    let column = board[index];
+    column.textContent = circle;
+    column.classList.add(isPlayer1 ? "is-player2" : "is-player1");
+    column.disabled = true;
+  }
+
+  let combinations = getWinningCombinations(board);
+  let circle = getSymbol(isPlayer1);
+  let cross = getSymbol(!isPlayer1);
+  let blockingMoves = getMoves(cross, combinations);
+  let winningMoves = getMoves(circle, combinations);
+
+  if (winningMoves.length > 0) {
+    selectMove(winningMoves);
+  } else if (blockingMoves.length > 0) {
+    selectMove(blockingMoves);
+  } else {
+    selectRandomMove();
+  }
+  isPlayer1 = !isPlayer1;
+}
+
+function setPlayerMove(event) {
+  let column = event.target;
+  if (isPlayer1) {
+    column.textContent = "X";
+    column.classList.add("is-player1");
+  } else {
+    column.textContent = "O";
+    column.classList.add("is-player2");
+  }
+  column.disabled = true;
+}
+
+function handleClick(event) {
+  setPlayerMove(event);
+  let result = getResult();
+  if (!isGameOver && isBotPlaying) {
+    setBotMove(gameBoard);
+    result = getResult();
+  }
+  let { indexes, gameState } = result;
+  isGameOver ? setScore(indexes, gameState) : (isPlayer1 = !isPlayer1);
 }
 
 function handleReset() {
   overlay.classList.remove("show-overlay");
   gameInfo.classList.remove("animate__tada");
   isPlayer1 = true;
-  gameWon = false;
-  isDraw = false;
-  buttons.forEach((button) => {
-    button.classList.remove("is-player1");
-    button.classList.remove("animate__flash");
-    button.innerText = "";
-    button.disabled = false;
+  isGameOver = false;
+  gameBoard.forEach((column) => {
+    column.classList.remove("is-player1", "is-player2", "animate__flash");
+    column.innerText = "";
+    column.disabled = false;
   });
   gameInfo.innerText = "";
   resetBtn.classList.remove("show-btn");
 }
 
-buttons.forEach((button) => {
-  button.addEventListener("click", handleClick);
+gameBoard.forEach((column) => {
+  column.addEventListener("click", handleClick);
 });
 resetBtn.addEventListener("click", handleReset);
+changePlayer.addEventListener("click", handleChange);

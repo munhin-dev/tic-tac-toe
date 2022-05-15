@@ -124,8 +124,6 @@ main {
 .game-board button:disabled,
 button[disabled] {
   font-family: "Macondo", cursive;
-  border: 1px solid #04b9dd;
-  background-color: #04b9dd;
   color: #ffffff;
   box-shadow: none;
 }
@@ -134,6 +132,12 @@ button[disabled] {
 button[disabled].is-player1 {
   background-color: #0d50cc;
   border: 1px solid #0d50cc;
+}
+
+.game-board button:disabled.is-player2,
+button[disabled].is-player2 {
+  background-color: #04b9dd;
+  border: 1px solid #04b9dd;
 }
 
 @media only screen and (max-width: 450px) {
