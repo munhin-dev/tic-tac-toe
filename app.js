@@ -5,10 +5,10 @@ const overlay = document.querySelector(".overlay");
 const scoreBoard = document.querySelector(".scoreboard");
 const opponentName = document.querySelector(".opponent-name");
 const gameMode = document.querySelector(".game-mode");
-const scorePlayer1 = document.querySelector(".player-1-score");
-const scorePlayer2 = document.querySelector(".player-2-score");
-const scoreTie = document.querySelector(".tie-score");
-const score = { player1: 0, player2: 0, tie: 0 };
+const player1Score = document.querySelector(".player-1-score");
+const player2Score = document.querySelector(".player-2-score");
+const drawScore = document.querySelector(".draw-score");
+const score = { player1: 0, player2: 0, draw: 0 };
 let isBotPlaying = true;
 let isPlayer1 = true;
 let isGameOver = false;
@@ -56,14 +56,14 @@ function getResult() {
 
 function setScore(indexes, { gameWon, isDraw }) {
   if (isDraw) {
-    score.tie++;
-    scoreTie.textContent = score.tie;
+    score.draw++;
+    drawScore.textContent = score.draw;
     gameInfo.textContent = "It is a Draw!!";
   }
   if (gameWon) {
     isPlayer1 ? score.player1++ : score.player2++;
-    scorePlayer1.textContent = score.player1;
-    scorePlayer2.textContent = score.player2;
+    player1Score.textContent = score.player1;
+    player2Score.textContent = score.player2;
     gameInfo.textContent = "We have a Winner!!";
     indexes.forEach((index) => {
       gameBoard[index].classList.add("animate__flash");
@@ -71,7 +71,7 @@ function setScore(indexes, { gameWon, isDraw }) {
   }
 }
 
-function addBotMove(board) {
+function findBotMove(board) {
   function randomIndex(num) {
     return Math.floor(Math.random() * num);
   }
@@ -110,20 +110,13 @@ function addBotMove(board) {
   }
 
   function selectRandomMove() {
-    const emptyColumns = [];
+    const indexes = [];
     board.forEach((column, index) => {
       if (!column.disabled) {
-        emptyColumns.push(index);
+        indexes.push(index);
       }
     });
-    return emptyColumns[randomIndex(emptyColumns.length)];
-  }
-
-  function applyMove(index) {
-    const column = board[index];
-    column.textContent = symbol;
-    column.classList.add(isPlayer1 ? "is-player2" : "is-player1");
-    column.disabled = true;
+    return indexes[randomIndex(indexes.length)];
   }
 
   const combinations = getWinningCombinations(board);
@@ -131,37 +124,30 @@ function addBotMove(board) {
   const opponentSymbol = getSymbol(!isPlayer1);
   const blockingMoves = getMoves(opponentSymbol, combinations);
   const winningMoves = getMoves(symbol, combinations);
-
-  if (winningMoves.length > 0) {
-    const index = selectMove(winningMoves);
-    applyMove(index);
-  } else if (blockingMoves.length > 0) {
-    const index = selectMove(blockingMoves);
-    applyMove(index);
-  } else {
-    const index = selectRandomMove();
-    applyMove(index);
-  }
   isPlayer1 = !isPlayer1;
+  if (winningMoves.length > 0) {
+    return selectMove(winningMoves);
+  } else if (blockingMoves.length > 0) {
+    return selectMove(blockingMoves);
+  } else {
+    return selectRandomMove();
+  }
 }
 
-function addMove(event) {
-  const column = event.target;
-  if (isPlayer1) {
-    column.textContent = "X";
-    column.classList.add("is-player1");
-  } else {
-    column.textContent = "O";
-    column.classList.add("is-player2");
-  }
+function addMark(column) {
+  column.textContent = isPlayer1 ? "X" : "O";
+  column.classList.add(isPlayer1 ? "is-player1" : "is-player2");
   column.disabled = true;
 }
 
 function handleClick(event) {
-  addMove(event);
+  const column = event.target;
+  addMark(column);
   let result = getResult();
   if (!isGameOver && isBotPlaying) {
-    addBotMove(gameBoard);
+    const index = findBotMove(gameBoard);
+    const column = gameBoard[index];
+    addMark(column);
     result = getResult();
   }
   const { indexes, gameState } = result;
@@ -194,10 +180,10 @@ function restartGame() {
 function resetScore() {
   score.player1 = 0;
   score.player2 = 0;
-  score.tie = 0;
-  scorePlayer1.textContent = score.player1;
-  scorePlayer2.textContent = score.player2;
-  scoreTie.textContent = score.tie;
+  score.draw = 0;
+  player1Score.textContent = score.player1;
+  player2Score.textContent = score.player2;
+  drawScore.textContent = score.draw;
 }
 
 function toggleBot() {
