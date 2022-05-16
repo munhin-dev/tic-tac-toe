@@ -9,7 +9,7 @@ body {
   background-color: #05386b;
   color: white;
   width: 50vw;
-  height: 80vh;
+  height: 100vh;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -20,7 +20,7 @@ h1 {
   text-align: center;
   position: relative;
   z-index: 1;
-  margin: 10px 0;
+  margin: 0;
 }
 
 main {
@@ -139,6 +139,20 @@ button[disabled].is-player1 {
 button[disabled].is-player2 {
   background-color: #04b9dd;
   border: 1px solid #04b9dd;
+}
+
+.flip-horizontal-bottom {
+  animation: flip-horizontal-bottom 0.4s cubic-bezier(0.455, 0.03, 0.515, 0.955)
+    both;
+}
+
+@keyframes flip-horizontal-bottom {
+  0% {
+    transform: rotateX(0);
+  }
+  100% {
+    transform: rotateX(-180deg);
+  }
 }
 
 @media only screen and (max-width: 450px) {

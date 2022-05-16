@@ -1,6 +1,5 @@
 const gameBoard = document.querySelectorAll(".game-board button");
 const restartBtn = document.querySelector(".reset-btn");
-const changePlayer = document.querySelector(".change-player");
 const gameInfo = document.querySelector(".game-info");
 const overlay = document.querySelector(".overlay");
 const scoreBoard = document.querySelector(".scoreboard");
@@ -15,25 +14,29 @@ let isPlayer1 = true;
 let isGameOver = false;
 
 function getWinningCombinations(board) {
-  let indexes = Array.from(board, (_, i) => i);
-  let horizontal = [];
-  let lastIndex = () => horizontal.length - 1;
+  const indexes = Array.from(board, (_, i) => i);
+  const horizontal = [];
+  const lastIndex = () => horizontal.length - 1;
   for (let i = 0; i < indexes.length; i += 3) {
     horizontal.push(indexes.slice(i, i + 3));
   }
-  let vertical = horizontal.map((_, i) => horizontal.map((row) => row[i]));
-  let leftDiagonal = horizontal.map((_, i) => horizontal[i][i]);
-  let rightDiagonal = horizontal.map((_, i) => horizontal[i][lastIndex() - i]);
+  const vertical = horizontal.map((_, i) => horizontal.map((row) => row[i]));
+  const leftDiagonal = horizontal.map((_, i) => horizontal[i][i]);
+  const rightDiagonal = horizontal.map(
+    (_, i) => horizontal[i][lastIndex() - i]
+  );
   return [...horizontal, ...vertical, leftDiagonal, rightDiagonal];
 }
 
 function getResult() {
-  let combinations = getWinningCombinations(gameBoard);
+  const combinations = getWinningCombinations(gameBoard);
+  let gameWon = false;
+  let isDraw = false;
   let winningRow = [];
   for (const combination of combinations) {
     gameWon = combination.every((index) => {
-      let cellContent = gameBoard[index].textContent;
-      let firstCell = gameBoard[combination[0]].textContent;
+      const cellContent = gameBoard[index].textContent;
+      const firstCell = gameBoard[combination[0]].textContent;
       return cellContent === firstCell && cellContent !== "";
     });
     if (gameWon) {
@@ -42,14 +45,12 @@ function getResult() {
     }
   }
   if (!gameWon) {
-    isDraw = Array.from(gameBoard).every((column) =>
-      Boolean(column.textContent)
-    );
+    isDraw = Array.from(gameBoard).every((column) => column.disabled);
   }
   isGameOver = isDraw || gameWon;
   return {
     indexes: winningRow,
-    gameState: { gameWon: gameWon, isDraw: isDraw },
+    gameState: { gameWon, isDraw },
   };
 }
 
@@ -80,11 +81,11 @@ function addBotMove(board) {
   }
 
   function getMoves(symbol, combinations) {
-    let bestMoves = [];
+    const bestMoves = [];
     for (const combination of combinations) {
-      let count = { filledCells: 0, emptyCells: 0 };
+      const count = { filledCells: 0, emptyCells: 0 };
       for (const index of combination) {
-        let columnContent = board[index].textContent;
+        const columnContent = board[index].textContent;
         if (columnContent === symbol) {
           count.filledCells++;
         } else if (columnContent === "") {
@@ -99,9 +100,9 @@ function addBotMove(board) {
   }
 
   function selectMove(moves) {
-    let move = moves[randomIndex(moves.length)];
+    const move = moves[randomIndex(moves.length)];
     for (const index of move) {
-      let column = board[index];
+      const column = board[index];
       if (!column.disabled) {
         return index;
       }
@@ -109,7 +110,7 @@ function addBotMove(board) {
   }
 
   function selectRandomMove() {
-    let emptyColumns = [];
+    const emptyColumns = [];
     board.forEach((column, index) => {
       if (!column.disabled) {
         emptyColumns.push(index);
@@ -119,33 +120,33 @@ function addBotMove(board) {
   }
 
   function applyMove(index) {
-    let column = board[index];
+    const column = board[index];
     column.textContent = symbol;
     column.classList.add(isPlayer1 ? "is-player2" : "is-player1");
     column.disabled = true;
   }
 
-  let combinations = getWinningCombinations(board);
-  let symbol = getSymbol(isPlayer1);
-  let opponentSymbol = getSymbol(!isPlayer1);
-  let blockingMoves = getMoves(opponentSymbol, combinations);
-  let winningMoves = getMoves(symbol, combinations);
+  const combinations = getWinningCombinations(board);
+  const symbol = getSymbol(isPlayer1);
+  const opponentSymbol = getSymbol(!isPlayer1);
+  const blockingMoves = getMoves(opponentSymbol, combinations);
+  const winningMoves = getMoves(symbol, combinations);
 
   if (winningMoves.length > 0) {
-    let index = selectMove(winningMoves);
+    const index = selectMove(winningMoves);
     applyMove(index);
   } else if (blockingMoves.length > 0) {
-    let index = selectMove(blockingMoves);
+    const index = selectMove(blockingMoves);
     applyMove(index);
   } else {
-    let index = selectRandomMove();
+    const index = selectRandomMove();
     applyMove(index);
   }
   isPlayer1 = !isPlayer1;
 }
 
 function addMove(event) {
-  let column = event.target;
+  const column = event.target;
   if (isPlayer1) {
     column.textContent = "X";
     column.classList.add("is-player1");
@@ -163,7 +164,7 @@ function handleClick(event) {
     addBotMove(gameBoard);
     result = getResult();
   }
-  let { indexes, gameState } = result;
+  const { indexes, gameState } = result;
   if (isGameOver) {
     setScore(indexes, gameState);
     overlay.classList.add("show-overlay");
@@ -182,10 +183,10 @@ function restartGame() {
   isGameOver = false;
   gameBoard.forEach((column) => {
     column.classList.remove("is-player1", "is-player2", "animate__flash");
-    column.innerText = "";
+    column.textContent = "";
     column.disabled = false;
   });
-  gameInfo.innerText = "";
+  gameInfo.textContent = "";
   restartBtn.classList.remove("show-btn");
   scoreBoard.style.cursor = "pointer";
 }
@@ -204,7 +205,7 @@ function toggleBot() {
     restartGame();
     resetScore();
     isBotPlaying = !isBotPlaying;
-    gameMode.innerText = isBotPlaying ? "1P" : "2P";
+    gameMode.textContent = isBotPlaying ? "1P" : "2P";
     opponentName.textContent = isBotPlaying ? "COMPUTER" : "PLAYER 2";
     scoreBoard.classList.add("animate__flipInY");
     setTimeout(() => {
