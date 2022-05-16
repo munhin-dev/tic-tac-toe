@@ -1,11 +1,15 @@
 const gameBoard = document.querySelectorAll(".game-board button");
-const resetBtn = document.querySelector(".reset-btn");
+const restartBtn = document.querySelector(".reset-btn");
 const changePlayer = document.querySelector(".change-player");
 const gameInfo = document.querySelector(".game-info");
 const overlay = document.querySelector(".overlay");
-const scorePlayer1 = document.querySelector(".player-1");
-const scorePlayer2 = document.querySelector(".player-2");
-const scoreTie = document.querySelector(".tie");
+const scoreBoard = document.querySelector(".scoreboard");
+const opponentName = document.querySelector(".opponent-name");
+const gameMode = document.querySelector(".game-mode");
+const scorePlayer1 = document.querySelector(".player-1-score");
+const scorePlayer2 = document.querySelector(".player-2-score");
+const scoreTie = document.querySelector(".tie-score");
+const score = { player1: 0, player2: 0, tie: 0 };
 let isBotPlaying = true;
 let isPlayer1 = true;
 let isGameOver = false;
@@ -50,9 +54,6 @@ function getResult() {
 }
 
 function setScore(indexes, { gameWon, isDraw }) {
-  overlay.classList.add("show-overlay");
-  resetBtn.classList.add("show-btn");
-  gameInfo.classList.add("animate__tada");
   if (isDraw) {
     score.tie++;
     scoreTie.textContent = score.tie;
@@ -69,7 +70,7 @@ function setScore(indexes, { gameWon, isDraw }) {
   }
 }
 
-function setBotMove(board) {
+function addBotMove(board) {
   function randomIndex(num) {
     return Math.floor(Math.random() * num);
   }
@@ -99,12 +100,12 @@ function setBotMove(board) {
 
   function selectMove(moves) {
     let move = moves[randomIndex(moves.length)];
-    move.forEach((index) => {
+    for (const index of move) {
       let column = board[index];
       if (!column.disabled) {
-        setMove(index);
+        return index;
       }
-    });
+    }
   }
 
   function selectRandomMove() {
@@ -114,34 +115,36 @@ function setBotMove(board) {
         emptyColumns.push(index);
       }
     });
-    let index = emptyColumns[randomIndex(emptyColumns.length)];
-    setMove(index);
+    return emptyColumns[randomIndex(emptyColumns.length)];
   }
 
-  function setMove(index) {
+  function applyMove(index) {
     let column = board[index];
-    column.textContent = circle;
+    column.textContent = symbol;
     column.classList.add(isPlayer1 ? "is-player2" : "is-player1");
     column.disabled = true;
   }
 
   let combinations = getWinningCombinations(board);
-  let circle = getSymbol(isPlayer1);
-  let cross = getSymbol(!isPlayer1);
-  let blockingMoves = getMoves(cross, combinations);
-  let winningMoves = getMoves(circle, combinations);
+  let symbol = getSymbol(isPlayer1);
+  let opponentSymbol = getSymbol(!isPlayer1);
+  let blockingMoves = getMoves(opponentSymbol, combinations);
+  let winningMoves = getMoves(symbol, combinations);
 
   if (winningMoves.length > 0) {
-    selectMove(winningMoves);
+    let index = selectMove(winningMoves);
+    applyMove(index);
   } else if (blockingMoves.length > 0) {
-    selectMove(blockingMoves);
+    let index = selectMove(blockingMoves);
+    applyMove(index);
   } else {
-    selectRandomMove();
+    let index = selectRandomMove();
+    applyMove(index);
   }
   isPlayer1 = !isPlayer1;
 }
 
-function setPlayerMove(event) {
+function addMove(event) {
   let column = event.target;
   if (isPlayer1) {
     column.textContent = "X";
@@ -154,17 +157,25 @@ function setPlayerMove(event) {
 }
 
 function handleClick(event) {
-  setPlayerMove(event);
+  addMove(event);
   let result = getResult();
   if (!isGameOver && isBotPlaying) {
-    setBotMove(gameBoard);
+    addBotMove(gameBoard);
     result = getResult();
   }
   let { indexes, gameState } = result;
-  isGameOver ? setScore(indexes, gameState) : (isPlayer1 = !isPlayer1);
+  if (isGameOver) {
+    setScore(indexes, gameState);
+    overlay.classList.add("show-overlay");
+    restartBtn.classList.add("show-btn");
+    gameInfo.classList.add("animate__tada");
+    scoreBoard.style.cursor = "auto";
+  } else {
+    isPlayer1 = !isPlayer1;
+  }
 }
 
-function handleReset() {
+function restartGame() {
   overlay.classList.remove("show-overlay");
   gameInfo.classList.remove("animate__tada");
   isPlayer1 = true;
@@ -175,11 +186,35 @@ function handleReset() {
     column.disabled = false;
   });
   gameInfo.innerText = "";
-  resetBtn.classList.remove("show-btn");
+  restartBtn.classList.remove("show-btn");
+  scoreBoard.style.cursor = "pointer";
+}
+
+function resetScore() {
+  score.player1 = 0;
+  score.player2 = 0;
+  score.tie = 0;
+  scorePlayer1.textContent = score.player1;
+  scorePlayer2.textContent = score.player2;
+  scoreTie.textContent = score.tie;
+}
+
+function toggleBot() {
+  if (!isGameOver) {
+    restartGame();
+    resetScore();
+    isBotPlaying = !isBotPlaying;
+    gameMode.innerText = isBotPlaying ? "1P" : "2P";
+    opponentName.textContent = isBotPlaying ? "COMPUTER" : "PLAYER 2";
+    scoreBoard.classList.add("animate__flipInY");
+    setTimeout(() => {
+      scoreBoard.classList.remove("animate__flipInY");
+    }, 500);
+  }
 }
 
 gameBoard.forEach((column) => {
   column.addEventListener("click", handleClick);
 });
-resetBtn.addEventListener("click", handleReset);
-changePlayer.addEventListener("click", handleChange);
+restartBtn.addEventListener("click", restartGame);
+scoreBoard.addEventListener("click", toggleBot);

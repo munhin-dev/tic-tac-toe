@@ -28,11 +28,19 @@
       <button class="animate__animated"></button>
       <button class="animate__animated"></button>
     </div>
-    <div class="scoreboard">
-      <p class="change-player">PLAYER (X): <span class="player-1">0</span></p>
-      <p>TIE: <span class="tie">0</span></p>
-      <p>PLAYER (O): <span class="player-2">0</span></p>
-    </div>
+    <table class="scoreboard animate__animated">
+      <tr>
+        <th>PLAYER 1 (X)</th>
+        <th>DRAW</th>
+        <th><span class="opponent-name">COMPUTER</span> (O)</th>
+        <th class="game-mode" rowspan="2">1P</th>
+      </tr>
+      <tr>
+        <td class="player-1-score">0</td>
+        <td class="tie-score">0</td>
+        <td class="player-2-score">0</td>
+      </tr>
+    </table>
     <div class="reset-btn">
       <button>Play Again</button>
     </div>

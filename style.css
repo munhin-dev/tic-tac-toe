@@ -20,6 +20,7 @@ h1 {
   text-align: center;
   position: relative;
   z-index: 1;
+  margin: 10px 0;
 }
 
 main {
@@ -29,11 +30,13 @@ main {
 }
 
 .scoreboard {
-  display: flex;
-  justify-content: space-around;
+  text-align: center;
+  padding: 10px;
   width: min(50vw, 350px);
   margin: 0 auto;
   z-index: 1;
+  cursor: pointer;
+  margin: 10px 0;
 }
 
 .game-board {
@@ -59,7 +62,7 @@ main {
   transition: background 300ms ease-in-out;
   font-family: "Macondo", cursive;
   padding: 8px 30px;
-  background-size: 300% 100%;
+  background-size: 175% 50%;
   border-radius: 50px;
   background-image: linear-gradient(
     to right,
@@ -73,7 +76,7 @@ main {
 }
 
 .reset-btn button:hover {
-  background-position: 100% 0;
+  background-position: 75% 0;
   transition: background 0.4s ease-in-out;
 }
 
@@ -116,7 +119,6 @@ main {
 .game-board button:hover {
   border: 1px solid #0099cc;
   background-color: #0099cc;
-  color: #ffffff;
   padding: 5px 10px;
   box-shadow: 0 0 10px 0 #3498db inset, 0 0 10px 4px #3498db;
 }
@@ -124,7 +126,6 @@ main {
 .game-board button:disabled,
 button[disabled] {
   font-family: "Macondo", cursive;
-  color: #ffffff;
   box-shadow: none;
 }
 
@@ -145,15 +146,18 @@ button[disabled].is-player2 {
     width: 100vw;
     height: 100vh;
   }
+  .reset-btn button {
+    font-size: 1.3em;
+  }
   h1 {
     font-size: 2.5em;
-    margin: px 0;
+    margin: 0;
   }
   .game-board button {
     font-size: 5em;
   }
   .scoreboard {
-    font-size: 1.1em;
+    font-size: 1em;
     width: 90vw;
   }
   .game-info {
@@ -164,17 +168,13 @@ button[disabled].is-player2 {
     width: 90vw;
     height: 90vw;
   }
-
-  .reset-btn button {
-    font-size: 1.5em;
-  }
 }
 @media only screen and (min-width: 451px) {
   .game-board button {
     font-size: 40px;
   }
   .scoreboard {
-    font-size: 0.9em;
+    font-size: 0.8em;
   }
   h1 {
     font-size: 2.5em;
