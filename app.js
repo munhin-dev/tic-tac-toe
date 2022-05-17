@@ -7,7 +7,7 @@ const opponentName = document.querySelector(".opponent-name");
 const gameMode = document.querySelector(".game-mode");
 const player1Score = document.querySelector(".player-1-score");
 const player2Score = document.querySelector(".player-2-score");
-const drawScore = document.querySelector(".draw-score");
+const scoreDraw = document.querySelector(".draw-score");
 const score = { player1: 0, player2: 0, draw: 0 };
 let isBotPlaying = true;
 let isPlayer1 = true;
@@ -57,7 +57,7 @@ function getResult() {
 function setScore(indexes, { gameWon, isDraw }) {
   if (isDraw) {
     score.draw++;
-    drawScore.textContent = score.draw;
+    scoreDraw.textContent = score.draw;
     gameInfo.textContent = "It is a Draw!!";
   }
   if (gameWon) {
@@ -183,7 +183,7 @@ function resetScore() {
   score.draw = 0;
   player1Score.textContent = score.player1;
   player2Score.textContent = score.player2;
-  drawScore.textContent = score.draw;
+  scoreDraw.textContent = score.draw;
 }
 
 function toggleBot() {
