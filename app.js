@@ -13,7 +13,7 @@ let isBotPlaying = true;
 let isPlayer1 = true;
 let isGameOver = false;
 
-function getWinningCombinations(board) {
+function getAllCombinations(board) {
   const indexes = Array.from(board, (_, i) => i);
   const horizontal = [];
   const lastIndex = () => horizontal.length - 1;
@@ -29,15 +29,15 @@ function getWinningCombinations(board) {
 }
 
 function getResult() {
-  const combinations = getWinningCombinations(gameBoard);
+  const combinations = getAllCombinations(gameBoard);
+  let symbol = isPlayer1 ? "X" : "O";
   let gameWon = false;
   let isDraw = false;
   let winningRow = [];
   for (const combination of combinations) {
     gameWon = combination.every((index) => {
-      const cellContent = gameBoard[index].textContent;
-      const firstCell = gameBoard[combination[0]].textContent;
-      return cellContent === firstCell && cellContent !== "";
+      const columnContent = gameBoard[index].textContent;
+      return columnContent === symbol;
     });
     if (gameWon) {
       winningRow = combination;
@@ -74,10 +74,6 @@ function setScore(indexes, { gameWon, isDraw }) {
 function findBotMove(board) {
   function randomIndex(num) {
     return Math.floor(Math.random() * num);
-  }
-
-  function getSymbol(player) {
-    return player ? "O" : "X";
   }
 
   function getMoves(symbol, combinations) {
@@ -119,16 +115,16 @@ function findBotMove(board) {
     return indexes[randomIndex(indexes.length)];
   }
 
-  const combinations = getWinningCombinations(board);
-  const symbol = getSymbol(isPlayer1);
-  const opponentSymbol = getSymbol(!isPlayer1);
-  const blockingMoves = getMoves(opponentSymbol, combinations);
-  const winningMoves = getMoves(symbol, combinations);
+  const combinations = getAllCombinations(board);
+  const symbol = isPlayer1 ? "O" : "X";
+  const opponentSymbol = isPlayer1 ? "X" : "O";
+  const blocking = getMoves(opponentSymbol, combinations);
+  const winning = getMoves(symbol, combinations);
   isPlayer1 = !isPlayer1;
-  if (winningMoves.length > 0) {
-    return selectMove(winningMoves);
-  } else if (blockingMoves.length > 0) {
-    return selectMove(blockingMoves);
+  if (winning.length > 0) {
+    return selectMove(winning);
+  } else if (blocking.length > 0) {
+    return selectMove(blocking);
   } else {
     return selectRandomMove();
   }
