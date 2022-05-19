@@ -112,7 +112,7 @@ button[disabled].is-player2 {
 @media only screen and (max-width: 450px) {
   body {
     width: 100vw;
-    height: 100vh;
+    height: 85vh;
   }
 
   h1 {
@@ -127,7 +127,7 @@ button[disabled].is-player2 {
     width: 90vw;
   }
   .game-info {
-    font-size: 2em;
+    font-size: 1.5em;
     margin: 10px 0;
   }
   .game-board {
@@ -151,7 +151,7 @@ button[disabled].is-player2 {
     font-size: 55px;
   }
   .scoreboard {
-    font-size: 1em;
+    font-size: 0.9em;
   }
   h1 {
     font-size: 3em;
@@ -163,18 +163,9 @@ button[disabled].is-player2 {
     font-size: 75px;
   }
   .scoreboard {
-    font-size: 1.1em;
+    font-size: 1.0em;
   }
   h1 {
     font-size: 4em;
-  }
-}
-
-@supports (padding: max(0px)) {
-  body,
-  header,
-  footer {
-    padding-left: min(0vmin, env(safe-area-inset-left));
-    padding-right: min(0vmin, env(safe-area-inset-right));
   }
 }
