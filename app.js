@@ -180,17 +180,15 @@ function resetScore() {
 }
 
 function toggleBot() {
-  if (!isGameOver) {
-    restartGame();
-    resetScore();
-    isBotPlaying = !isBotPlaying;
-    gameMode.textContent = isBotPlaying ? "1P" : "2P";
-    opponentName.textContent = isBotPlaying ? "COMPUTER" : "PLAYER 2";
-    scoreBoard.classList.add("animate__flipInY");
-    setTimeout(() => {
-      scoreBoard.classList.remove("animate__flipInY");
-    }, 500);
-  }
+  restartGame();
+  resetScore();
+  isBotPlaying = !isBotPlaying;
+  gameMode.textContent = isBotPlaying ? "1P" : "2P";
+  opponentName.textContent = isBotPlaying ? "COMPUTER" : "PLAYER 2";
+  scoreBoard.classList.add("animate__flipInY");
+  setTimeout(() => {
+    scoreBoard.classList.remove("animate__flipInY");
+  }, 500);
 }
 
 gameBoard.forEach((column) => {
