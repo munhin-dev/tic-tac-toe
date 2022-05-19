@@ -71,7 +71,7 @@ main {
 .game-info {
   font-size: 25px;
   z-index: 1;
-  min-height: 29px;
+  min-height: 30px;
 }
 
 .game-board button {
