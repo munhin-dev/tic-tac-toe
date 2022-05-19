@@ -170,13 +170,6 @@ button[disabled].is-player2 {
   }
 }
 
-@media only screen and (orientation: landscape) and (max-height: 450px) {
-  body {
-    height: 100vw;
-    transform: rotate(270deg);
-  }
-}
-
 @supports (padding: max(0px)) {
   body,
   header,
