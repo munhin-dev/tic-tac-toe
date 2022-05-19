@@ -1,5 +1,4 @@
 const gameBoard = document.querySelectorAll(".game-board button");
-const restartBtn = document.querySelector(".reset-btn");
 const gameInfo = document.querySelector(".game-info");
 const overlay = document.querySelector(".overlay");
 const scoreBoard = document.querySelector(".scoreboard");
@@ -199,5 +198,5 @@ function toggleBot() {
 gameBoard.forEach((column) => {
   column.addEventListener("click", handleClick);
 });
-restartBtn.addEventListener("click", restartGame);
+overlay.addEventListener("click", restartGame);
 scoreBoard.addEventListener("click", toggleBot);

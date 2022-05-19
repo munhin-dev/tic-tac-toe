@@ -48,38 +48,6 @@ main {
   gap: min(0.8vw, 10px);
 }
 
-.reset-btn {
-  margin: 0 auto;
-  z-index: 1;
-  visibility: hidden;
-}
-
-.reset-btn button {
-  font-size: min(3.5vw, 25px);
-  border: none;
-  border-radius: 20px;
-  color: white;
-  transition: background 300ms ease-in-out;
-  font-family: "Macondo", cursive;
-  padding: 8px 30px;
-  background-size: 175% 50%;
-  border-radius: 50px;
-  background-image: linear-gradient(
-    to right,
-    rgb(40, 31, 207),
-    rgb(41, 116, 230),
-    rgb(5, 184, 219)
-  );
-  box-shadow: 0 4px 15px 0 rgba(49, 150, 196, 0.75);
-  transition: background 0.4s ease-in-out;
-  cursor: pointer;
-}
-
-.reset-btn button:hover {
-  background-position: 75% 0;
-  transition: background 0.4s ease-in-out;
-}
-
 .show-btn {
   visibility: visible;
 }
@@ -146,9 +114,7 @@ button[disabled].is-player2 {
     width: 100vw;
     height: 100vh;
   }
-  .reset-btn button {
-    font-size: 1.3em;
-  }
+
   h1 {
     font-size: 2.5em;
     margin: 0;
