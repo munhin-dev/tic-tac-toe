@@ -71,7 +71,7 @@ main {
 .game-info {
   font-size: 25px;
   z-index: 1;
-  min-height: 30px;
+  min-height: 32px;
 }
 
 .game-board button {
@@ -163,7 +163,7 @@ button[disabled].is-player2 {
     font-size: 75px;
   }
   .scoreboard {
-    font-size: 1.0em;
+    font-size: 1em;
   }
   h1 {
     font-size: 4em;
