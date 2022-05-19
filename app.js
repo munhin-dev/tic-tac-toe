@@ -149,7 +149,6 @@ function handleClick(event) {
   if (isGameOver) {
     setScore(indexes, gameState);
     overlay.classList.add("show-overlay");
-    restartBtn.classList.add("show-btn");
     gameInfo.classList.add("animate__tada");
     scoreBoard.style.cursor = "auto";
   } else {
@@ -168,7 +167,6 @@ function restartGame() {
     column.disabled = false;
   });
   gameInfo.textContent = "";
-  restartBtn.classList.remove("show-btn");
   scoreBoard.style.cursor = "pointer";
 }
 
