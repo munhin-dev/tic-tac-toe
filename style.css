@@ -169,3 +169,10 @@ button[disabled].is-player2 {
     font-size: 4em;
   }
 }
+
+@media only screen and (orientation: landscape) and (max-height: 450px){
+  body {
+    height: 100vw;
+    transform: rotate(90deg);
+  }
+}
