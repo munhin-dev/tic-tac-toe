@@ -154,7 +154,7 @@ button[disabled].is-player2 {
     margin: 0;
   }
   .game-board button {
-    font-size: 5em;
+    font-size: 4.5em;
   }
   .scoreboard {
     font-size: 1em;
@@ -171,7 +171,7 @@ button[disabled].is-player2 {
 }
 @media only screen and (min-width: 451px) {
   .game-board button {
-    font-size: 40px;
+    font-size: 35px;
   }
   .scoreboard {
     font-size: 0.8em;
@@ -182,7 +182,7 @@ button[disabled].is-player2 {
 }
 @media only screen and (min-width: 601px) {
   .game-board button {
-    font-size: 60px;
+    font-size: 55px;
   }
   .scoreboard {
     font-size: 1em;
@@ -194,7 +194,7 @@ button[disabled].is-player2 {
 
 @media only screen and (min-width: 800px) {
   .game-board button {
-    font-size: 80px;
+    font-size: 75px;
   }
   .scoreboard {
     font-size: 1.1em;
