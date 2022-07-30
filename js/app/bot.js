@@ -49,11 +49,6 @@ const bot = {
     if (blockingMoves.length > 0) {
       return currentBoard[bot.chooseMove(blockingMoves)];
     }
-
-    if (!currentBoard[4].disabled) {
-      return currentBoard[4];
-    }
-
     return currentBoard[bot.randomMove(currentBoard)];
   },
 };
