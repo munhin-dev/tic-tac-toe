@@ -112,3 +112,5 @@ const game = (() => {
 })()
 
 export default game
+
+let t;
