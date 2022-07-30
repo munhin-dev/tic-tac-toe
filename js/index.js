@@ -1,4 +1,3 @@
-/* eslint-disable require-jsdoc */
 import game from "./app/game.js";
 import bot from "./app/bot.js";
 const gameBoard = document.querySelectorAll(".game-board button");
