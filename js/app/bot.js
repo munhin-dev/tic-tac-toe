@@ -39,7 +39,7 @@ const bot = {
   },
 
   async findMove(currentBoard) {
-    await delayExecution(500);
+    await delayExecution(750);
     const combinations = board.getCurrent(currentBoard);
     const winningMoves = bot.checkMoves('O', combinations);
     const blockingMoves = bot.checkMoves('X', combinations);
