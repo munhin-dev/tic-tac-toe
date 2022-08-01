@@ -12,7 +12,7 @@ async function handleClick(event) {
     game.addMark(await bot.findMove(gameBoard));
     result = game.checkResult(gameBoard);
   }
-  game.isGameOver ? game.displayGameOver(result) : game.nextPlayerTurn();
+  game.isGameOver ? game.handleGameOver(result) : game.nextPlayerTurn();
 }
 
 gameBoard.forEach((column) => column.addEventListener("click", handleClick));
