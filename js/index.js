@@ -18,3 +18,4 @@ async function handleClick(event) {
 gameBoard.forEach((column) => column.addEventListener("click", handleClick));
 overlay.addEventListener("click", game.restartGame);
 scoreBoard.addEventListener("click", game.toggleBot);
+ 
