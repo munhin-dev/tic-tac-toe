@@ -44,7 +44,7 @@ const game = (() => {
       }
     },
 
-    displayGameOver({
+    handleGameOver({
       indexes,
       gameState: {gameWon = false, isDraw = false},
     }) {
